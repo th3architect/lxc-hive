@@ -45,7 +45,7 @@ namespace :lxc do
           invoke('lxc:stop', name) if running
           execute :lxc, :publish, name, '--alias', image
           invoke('lxc:start', name) if running
-          invoke('ixc:image_info', image)
+          invoke('lxc:image_info', image)
         when 'create_container'
           image = HiveHelper::value_from_argument(args, :image, default: 'ubuntu:14.04')
           raise "image #{image} does not exists" unless HiveHelper::has_image?(self, image)
