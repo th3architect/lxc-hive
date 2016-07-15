@@ -23,7 +23,9 @@ module HiveHelper
   def has_container?(context, container_name)
     context.test("lxc info #{container_name}")
   end
-
+  def has_image?(context, image_name)
+    context.test("lxc image info #{image_name}")
+  end
   def container_running?(context, container_name)
     context.capture("lxc info #{container_name}").include?('Status: Running')
   end
