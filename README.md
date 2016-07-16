@@ -1,6 +1,10 @@
-# LXD Hive: Manage LXC instances with puppet and capistrano
+# LXD Hive: Manage LXC instances with Capistrano 3
 
-This is a Capistrano 3 based tool to control and provision Linux Containers. The project tries to make it easy to enjoy the fantastic speed of LXD. You may need to be familiar with Capistrano.
+This is a Capistrano 3 based tool to control and provision Linux Containers. The project tries to make it easy to enjoy the fantastic speed of LXD. With the help of this project, you can spin up and switch containers in a second.You may need to be familiar with Capistrano.
+
+## Progress
+
+The project is current not complete. 
 
 
 ## Features
@@ -8,10 +12,15 @@ This is a Capistrano 3 based tool to control and provision Linux Containers. The
 - create, provision, destroy, duplicate lxc instances
 - port forwarding with *ssh*
 
+However, these are **NOT** implemented:
+
+- shared folder
+- automatic port forwarding
+
 ## Requirements
 
-- a recent version of ruby
-- lxd installed on a remote server (or a virtual machine) [guide](https://linuxcontainers.org/lxd/getting-started-cli/)
+- Ruby(2.0 or newer) with bundler
+- vagrant container or remote server with Ubuntu(14.04 or 16.04) and[LXC](https://linuxcontainers.org/lxd/getting-started-cli/)
 
 ## Install
 
