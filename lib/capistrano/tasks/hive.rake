@@ -64,7 +64,7 @@ end
 desc "hive:list containers"
 task :list do
   on roles(:hive) do
-    execute 'lxc list'
+    puts capture('lxc list')
   end
 end
 
@@ -80,7 +80,7 @@ task :console, :container do |t, args|
     next if command.empty?
 
     if %w{quit exit q}.include? command
-      puts t("console.bye")
+      puts "bye"
       break
     else
       begin
