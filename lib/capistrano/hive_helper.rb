@@ -137,7 +137,7 @@ module HiveHelper
     apply_profile
   end
   def add_public_key
-    context.execute %{lxc file push ~/.ssh/authorized_keys #{container}/home/ubuntu/.ssh/authorized_keys}
+    context.execute %{lxc file push ~/.ssh/authorized_keys #{container}#{fetch(:container_authorized_keys_file)}}
   end
   def apply_profile
     zipfile = 'profile_lxc_hive.tar.gz'
