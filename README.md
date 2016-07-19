@@ -1,11 +1,6 @@
-# LXD Hive: Manage LXC instances with Capistrano 3
+# LXD Hive: VM or server as a HIVE for lots of linux containers
 
-This is a Capistrano 3 based tool to control and provision Linux Containers. The project tries to make it easy to enjoy the fantastic speed of LXD. With the help of this project, you can spin up and switch containers in a second.You may need to be familiar with Capistrano.
-
-## Progress
-
-The project is current not complete. 
-
+This is a Capistrano 3 based tool to control and provision Linux Containers nested in a vagrant-managed virtualbox VM. The idea is that managing containers instead of VMs is way **faster**. After taking some time to create the environment, everything that follows takes about a second.
 
 ## Features
 
@@ -33,15 +28,66 @@ However, these are **NOT** implemented:
 - edit this file to set a name and a ssh_pub_key so that you can ssh into the container: `bootstrap/setup.pp`. Note that the ssh_pub_key does not allow spaces in the string.
 
 ## Quick Start
+1. `vagrant up` - start the vagrant machine. While the project works for server, vagrant managed virtualbox is a good starting point. The vagrant file provided creates a confortable environment for lxc.
+2. `cap -T | grep hive` - list of tasks that you can try.
+3. `cap vagrant build[default]` - first, we need to build a profile. Profile is used to provision your containers.
+4. `cap vagrant up[t1,default]` - create container t1 based on a profile.
+5. `cap vagrant forward[t1]` - forward ports so that you can access them on your local machine. access your container @ `ssh ubuntu@localhost -p 2222 -i .vagrant/machines/default/virtualbox/private_key`
+6. `cap vagrant snapshot[t1,step1]` - create a snapshot named step1.
+7. `cap vagrant restore[t1,step1]` - restore your container to step1. Note that you can only restore to the latest snapshot.
+8. `cap vagrant stop[t1]` - stop the container.
 
-1. `cap -T` to see the list of available tasks.
-2. create configuration file for your server, an example can be found at *config/deploy/hive.rb.sample*.
-3. `cap server up[lxc1]` to launch a container named *lxc1*.
-4. `cap server connect[lxc1]` to forward port with ssh. By default, you can ssh to the *lxc1* instance @ 2222 and access http @ 8888.
+## Notes
 
-## Advanced
+### What is a profile
 
-- You can edit files in *bootstrap* folder to reflect your provision strategy.
-- `cap server image[lxc1,image1]` creates an image named *image1* from container *lxc1*. (note: the container will be offline when the image is being created.)
-- `cap server up[lxc2,image1]` creates a new container *lxc2* from image *image1*
+A profile is used to provision your container. You can create your own profile inside `./profiles` folder. Check out `default` and `puppet` profiles as a starting point. Each profile should have a `init.sh` at its root directory.
 
+### What `build` does
+
+For example, `cap vagrant build[default]`:
+
+1. create a prototype container and start it.
+2. copy the server's `authorized_keys` to the container
+3. copy the default profile to the container
+4. run `init.sh` inside the container
+5. make a snapshot and stop the container
+
+### What `up` does
+
+For example, `cap vagrant up[t1,default]`:
+
+if t1 already exists, then it tries to start the container, else ->
+
+1. make sure the profile is specified and a prototype container exists.
+2. copy from prototype container's snapshot and create a container
+
+### why not simply use vagrant?
+
+LXC is fast:
+
+```
+wj:~/lxc-hive:#cap vagrant up[t1,default]
+00:00 lxc:copy
+      01 lxc copy default-proto/snap t1
+    ✔ 01 ubuntu@localhost 0.157s
+00:00 lxc:start
+      01 lxc start t1
+    ✔ 01 ubuntu@localhost 0.292s
+wj:~/lxc-hive:#cap vagrant snapshot[t1,step1]
+00:00 lxc:snapshot
+      01 lxc snapshot t1 step1
+    ✔ 01 ubuntu@localhost 0.243s
+wj:~/lxc-hive:#cap vagrant restore[t1,step1]
+00:00 lxc:restore
+      01 lxc restore t1 step1
+    ✔ 01 ubuntu@localhost 2.234s
+wj:~/lxc-hive:#cap vagrant stop[t1]
+00:00 lxc:stop
+      01 lxc stop t1
+    ✔ 01 ubuntu@localhost 1.101s
+wj:~/lxc-hive:#cap vagrant up[t1]
+00:00 lxc:start
+      01 lxc start t1
+    ✔ 01 ubuntu@localhost 0.457s
+```

@@ -1,36 +1,62 @@
-# some vagrant-like tasks
-# user can ignore tasks under 'lxc' namespace in most cases
-# and be happy :P
+# A user-friendly list of tasks.
+# Always ask politely.
 
-desc 'Create a base image using bootstrap folder configurations'
-task :bootstrap do
+require_relative '../hive_helper'
+include HiveHelper
+require 'byebug'
+
+desc "hive:build profile"
+task :build, :profile do |t, args|
+  profile = args[:profile] || HiveHelper::select_profile
+  invoke('lxc:build_profile', profile)
 end
 
-desc 'Launch new containers from the base image'
-task :up, :name do
-
+desc "hive:create / start a container"
+task :up, :container, :profile do |t, args|
+  container = args[:container] || HiveHelper::ask_container_name
+  if HiveHelper::container_exist?(container)
+    invoke('lxc:start', container)
+    next
+  end
+  profile = args[:profile] || HiveHelper::select_profile
+  unless HiveHelper::profile_built?(profile)
+    raise "You need to build the profile first."
+  end
+  invoke('lxc:copy', container, HiveHelper::profile_container(profile), "snap")
+  invoke('lxc:start', container)
 end
 
-desc 'destroy container'
-task :destroy, :name do
+desc "hive:stop a container"
+task :stop, :container do |t, args|
+  container = args[:container] || HiveHelper::select_container
+  invoke('lxc:stop', container) unless container.nil?
 end
 
-desc 'resume a halted container'
-task :resume, :name do
+desc "hive:task a snapshot"
+task :snapshot, :container, :snapshot do |t, args|
+  container = args[:container] || HiveHelper::select_container
+  snapshot = args[:snapshot] || HiveHelper::ask_snapshot_name
+  invoke('lxc:snapshot', container, snapshot) unless container.nil?
 end
 
-desc 'halt container'
-task :halt, :name do
+desc "hive:restore to the latest snapshot"
+task :restore, :container, :snapshot do |t, args|
+  container = args[:container] || HiveHelper::select_container
+  snapshot = args[:snapshot] || HiveHelper::ask_snapshot_name
+  invoke('lxc:restore', container, snapshot) unless container.nil?
 end
 
-desc 'reload container'
-task :reload, :name do
+desc "hive:delete the container"
+task :delete, :container do |t, args|
+  container = args[:container] || HiveHelper::select_container
+  invoke('lxc:delete', container) unless container.nil?
 end
 
-desc 'port foward services so you can talk to container'
-task :link, :name do
-end
-
-desc 'status:list available images and containers'
-task :status do
+desc "hive:forwarding ports for container"
+task :forward, :container do |t, args|
+  container = args[:container] || HiveHelper::select_container
+  forwarding_cmd = HiveHelper::forwarding_cmd(container)
+  puts "forward ports for #{container}:"
+  puts forwarding_cmd
+  %x{#{forwarding_cmd}}
 end

@@ -3,6 +3,8 @@ set :log_level, :debug
 
 # lxc hive related
 
-set :port_source, [22, 80]
-set :port_target, [2222, 8888]
+set :default_profile, 'default'
 set :base_image, 'ubuntu:14.04'
+set :base_container, 'prototype'
+set :base_snapshot, 'snap'
+set :ip_reg, /10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
