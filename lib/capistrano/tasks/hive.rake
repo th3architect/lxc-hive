@@ -11,6 +11,15 @@ task :build, :profile do |t, args|
   invoke('lxc:build_profile', profile)
 end
 
+desc "hive:apply profile to a container"
+task :apply, :container, :profile do |t, args|
+  container = args[:container] || HiveHelper::ask_container_name
+  raise "container does not exist" unless HiveHelper::container_exist?(container)
+  invoke('lxc:start', container) rescue ''
+  profile = args[:profile] || HiveHelper::select_profile
+  invoke('lxc:build', container, profile)
+end
+
 desc "hive:create / start a container"
 task :up, :container, :profile do |t, args|
   container = args[:container] || HiveHelper::ask_container_name
