@@ -1,6 +1,6 @@
 /config/deploy/*.rb
 !/config/deploy/vagrant.rb
-!/config/deploy/hive.rb.example
+!/config/deploy/hpms.rb
 /.vagrant/
 /log/
 ssh_config
