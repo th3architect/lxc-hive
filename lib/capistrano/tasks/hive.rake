@@ -68,3 +68,29 @@ task :list do
   end
 end
 
+# from https://github.com/capistrano/capistrano/blob/master/lib/capistrano/tasks/console.rake
+desc "hive:Execute remote commands"
+task :console, :container do |t, args|
+  container = args[:container] || HiveHelper::select_container
+  loop do
+    print "#{container}> "
+
+    command = (input = $stdin.gets) ? input.chomp : "exit"
+
+    next if command.empty?
+
+    if %w{quit exit q}.include? command
+      puts t("console.bye")
+      break
+    else
+      begin
+        on roles :hive do
+          execute :lxc, :exec, container, '--', command
+        end
+      rescue => e
+        puts e
+      end
+    end
+  end
+end
+
