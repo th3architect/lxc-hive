@@ -60,3 +60,11 @@ task :forward, :container do |t, args|
   puts forwarding_cmd
   %x{#{forwarding_cmd}}
 end
+
+desc "hive:list containers"
+task :list do
+  on roles(:hive) do
+    execute 'lxc list'
+  end
+end
+
