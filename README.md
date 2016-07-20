@@ -35,11 +35,22 @@ add this to your command:
 ```
 #! /usr/bin/env bash
 
-# edit the directory ->
 cd ~/lxc-hive
+target="vagrant"
 
-# edit the stage ->
-cap vagrant "$@"
+if [ "$#" -eq 0 ]; then
+  echo "action not specified"
+elif [ "$#" -eq 1 ]; then
+  # hive list
+  # hive up[t1]
+  cap "$target" "$@"
+elif [ "$#" -eq 2 ]; then
+  # hive up t1
+  cap "$target" "$1[$2]"
+elif [ "$#" -eq 3 ]; then
+  # hive up t1 default
+  cap "$target" "$1[$2,$3]"
+fi
 ```
 
 ### ssh config
