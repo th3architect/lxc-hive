@@ -30,7 +30,7 @@ task :up, :container, :profile do |t, args|
   unless HiveHelper::profile_built?(profile)
     raise "You need to build the profile first."
   end
-  invoke('lxc:copy', container, HiveHelper::profile_container(profile), "snap")
+  invoke('lxc:copy', container, HiveHelper::profile_container(profile))
   invoke('lxc:start', container)
 end
 

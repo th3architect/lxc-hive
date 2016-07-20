@@ -72,7 +72,6 @@ namespace :lxc do
     invoke('lxc:launch', prototype)
     HiveHelper::wait_connection(prototype)
     invoke('lxc:build',prototype, profile)
-    invoke('lxc:snapshot', prototype, 'snap')
     Rake::Task["lxc:stop"].reenable
     invoke('lxc:stop', prototype)
   end

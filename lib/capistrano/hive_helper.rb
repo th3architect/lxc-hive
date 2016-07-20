@@ -23,7 +23,7 @@ module HiveHelper
     fetch_arg(args, :container)
   end
   def snapshot
-    fetch_arg(args, :snapshot)
+    fetch_arg(args, :snapshot, allow_nil: true)
   end
   def source_container
     fetch_arg(args, :source_container)
@@ -104,9 +104,9 @@ module HiveHelper
     return fetch(:tempvalue)
   end
 
-  def fetch_arg(args, key, default: nil)
+  def fetch_arg(args, key, allow_nil: false, default: nil)
     val = args[key] || default
-    raise "You need to specify #{key}" if val.nil?
+    raise "You need to specify #{key}" if val.nil? and !allow_nil
     return val
   end
 
@@ -121,7 +121,11 @@ module HiveHelper
     context.execute %{lxc launch #{image} #{container}}
   end
   def copy
-    context.execute %{lxc copy #{source_container}/#{snapshot} #{container}}
+    if snapshot.nil?
+      context.execute %{lxc copy #{source_container} #{container}}
+    else
+      context.execute %{lxc copy #{source_container}/#{snapshot} #{container}}
+    end
   end
   def take_snapshot
     context.execute %{lxc snapshot #{container} #{snapshot}}

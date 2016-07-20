@@ -97,7 +97,7 @@ For example, `cap vagrant build[default]`:
 2. copy the server's `authorized_keys` to the container
 3. copy the default profile to the container
 4. run `init.sh` inside the container
-5. make a snapshot and stop the container
+5. stop the container
 
 ### What does `up` do
 
@@ -106,7 +106,7 @@ For example, `cap vagrant up[t1,default]`:
 if t1 already exists, then it tries to start the container, else ->
 
 1. make sure the profile is specified and a prototype container exists.
-2. copy from prototype container's snapshot and create a container
+2. copy from prototype container and create a container
 
 ### why not just use vagrant
 
