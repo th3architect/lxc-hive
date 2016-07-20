@@ -86,13 +86,13 @@ module HiveHelper
   def select_container
     puts "List of Containers"
     container_list
-    set :tempvalue, ask("\nEnter the name of the container:\n")
+    set :tempvalue, ask("\nthe name of the container:\n")
     return fetch(:tempvalue)
   end
   def select_profile
     puts "List of Profiles"
     profile_list
-    set :tempvalue, ask("\nEnter the name of the profile:\n")
+    set :tempvalue, ask("\nthe name of the profile:\n")
     return fetch(:tempvalue)
   end
   def ask_container_name

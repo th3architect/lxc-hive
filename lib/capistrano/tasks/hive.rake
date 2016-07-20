@@ -3,7 +3,6 @@
 
 require_relative '../hive_helper'
 include HiveHelper
-require 'byebug'
 
 desc "hive:build profile"
 task :build, :profile do |t, args|
