@@ -66,6 +66,7 @@ namespace :lxc do
   desc 'build the prototype for other containers'
   task :build_profile, :profile do |t, args|
     HiveHelper::set_args(args)
+    profile = HiveHelper::profile
     prototype = HiveHelper::profile + '-proto'
     invoke('lxc:stop', prototype) rescue ' '
     invoke('lxc:delete', prototype) rescue ' '
